@@ -25,6 +25,7 @@ public class GameField extends JPanel implements ActionListener {
     private boolean down = false;
     private boolean up = false;
     private boolean inGame = true;
+    private boolean isGameOver = false;
 
     public GameField() {
         setBackground(Color.black);
@@ -32,7 +33,7 @@ public class GameField extends JPanel implements ActionListener {
         initGame();
         addKeyListener(new FieldKeyListener());
         setFocusable(true);
-        playMusic();
+//        playMusic();
     }
 
     public void initGame() {
@@ -61,9 +62,21 @@ public class GameField extends JPanel implements ActionListener {
         dot = iid.getImage();
     }
 
-    public void playMusic() {
+    public void playMusicInGame() {
         try {
             File file = new File("snake-game.wav");
+            Clip clip = AudioSystem.getClip();
+            clip.open(AudioSystem.getAudioInputStream(file));
+            clip.start();
+        } catch (Exception exc) {
+            System.err.println(exc.getMessage());
+        }
+
+    }
+
+    public void playMusicGameOver() {
+        try {
+            File file = new File("game-over.wav");
             Clip clip = AudioSystem.getClip();
             clip.open(AudioSystem.getAudioInputStream(file));
             clip.start();
@@ -81,9 +94,11 @@ public class GameField extends JPanel implements ActionListener {
                 g.drawImage(dot, x[i], y[i], this);
             }
         } else {
-            String str = "Game Over";
+            String str = "Game Over \uD83E\uDD21";
+            Font f = new Font("Arial", Font.BOLD, 25);
+            g.setFont(f);
             g.setColor(Color.white);
-            g.drawString(str, 125, SIZE / 2);
+            g.drawString(str, 90, SIZE / 2);
         }
     }
 
@@ -118,22 +133,28 @@ public class GameField extends JPanel implements ActionListener {
         for (int i = dots; i > 0; i--) {
             if (i > 4 && x[0] == x[i] && y[0] == y[i]) {
                 inGame = false;
+                isGameOver = true;
             }
 
             if (x[0] > SIZE) {
                 inGame = false;
+                isGameOver = true;
             }
 
             if (x[0] < 0) {
                 inGame = false;
+                isGameOver = true;
             }
 
             if (y[0] > SIZE) {
                 inGame = false;
+                isGameOver = true;
+
             }
 
             if (y[0] < 0) {
                 inGame = false;
+                isGameOver = true;
             }
         }
     }
