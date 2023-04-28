@@ -25,7 +25,7 @@ public class GameField extends JPanel implements ActionListener {
     private boolean down = false;
     private boolean up = false;
     private boolean inGame = true;
-    private boolean isGameOver = false;
+    private Random random = new Random();
 
     public GameField() {
         setBackground(Color.black);
@@ -33,7 +33,18 @@ public class GameField extends JPanel implements ActionListener {
         initGame();
         addKeyListener(new FieldKeyListener());
         setFocusable(true);
-//        playMusic();
+        playMusic();
+    }
+
+    private void playMusic() {
+        try {
+            File file = new File("snake-game.wav");
+            Clip clip = AudioSystem.getClip();
+            clip.open(AudioSystem.getAudioInputStream(file));
+            clip.start();
+        } catch (Exception exc) {
+            System.err.println(exc.getMessage());
+        }
     }
 
     public void initGame() {
@@ -50,8 +61,8 @@ public class GameField extends JPanel implements ActionListener {
     }
 
     public void createApple() {
-        appleX = new Random().nextInt(20) * DOT_SIZE;
-        appleY = new Random().nextInt(20) * DOT_SIZE;
+        appleX = random.nextInt(20) * DOT_SIZE;
+        appleY = random.nextInt(20) * DOT_SIZE;
     }
 
     public void loadImages() {
@@ -60,29 +71,6 @@ public class GameField extends JPanel implements ActionListener {
 
         ImageIcon iid = new ImageIcon("dot.png");
         dot = iid.getImage();
-    }
-
-    public void playMusicInGame() {
-        try {
-            File file = new File("snake-game.wav");
-            Clip clip = AudioSystem.getClip();
-            clip.open(AudioSystem.getAudioInputStream(file));
-            clip.start();
-        } catch (Exception exc) {
-            System.err.println(exc.getMessage());
-        }
-
-    }
-
-    public void playMusicGameOver() {
-        try {
-            File file = new File("game-over.wav");
-            Clip clip = AudioSystem.getClip();
-            clip.open(AudioSystem.getAudioInputStream(file));
-            clip.start();
-        } catch (Exception exc) {
-            System.err.println(exc.getMessage());
-        }
     }
 
     @Override
@@ -133,28 +121,22 @@ public class GameField extends JPanel implements ActionListener {
         for (int i = dots; i > 0; i--) {
             if (i > 4 && x[0] == x[i] && y[0] == y[i]) {
                 inGame = false;
-                isGameOver = true;
             }
 
             if (x[0] > SIZE) {
                 inGame = false;
-                isGameOver = true;
             }
 
             if (x[0] < 0) {
                 inGame = false;
-                isGameOver = true;
             }
 
             if (y[0] > SIZE) {
                 inGame = false;
-                isGameOver = true;
-
             }
 
             if (y[0] < 0) {
                 inGame = false;
-                isGameOver = true;
             }
         }
     }
@@ -169,7 +151,6 @@ public class GameField extends JPanel implements ActionListener {
 
         repaint();
     }
-
 
     class FieldKeyListener extends KeyAdapter {
         @Override
